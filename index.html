@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Báo cáo vận hành — NM Bột đá</title>
+<style>
+  :root{
+    --ink:#10221f;
+    --accent:#0e7c66;
+    --accent-dark:#0a5c4c;
+    --accent-soft:#e4f4ef;
+    --bg:#f7f8f7;
+    --card:#ffffff;
+    --line:#e4e7e4;
+    --muted:#6b756f;
+    --danger:#c4402f;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); padding-bottom:90px;
+  }
+  .topbar{
+    background:#fff7e6; color:#8a5a00; text-align:center;
+    font-size:12.5px; padding:7px 12px; border-bottom:1px solid #f0dca3;
+  }
+  header.hero{
+    background:linear-gradient(135deg,var(--accent-dark),var(--accent));
+    color:#fff; padding:26px 20px 22px;
+  }
+  header.hero .eyebrow{font-size:12px; letter-spacing:.06em; text-transform:uppercase; opacity:.8; margin-bottom:6px;}
+  header.hero h1{font-size:21px; margin:0 0 6px; font-weight:600;}
+  header.hero p{font-size:13px; opacity:.9; margin:0;}
+
+  .wrap{max-width:640px; margin:0 auto; padding:0 16px;}
+  .progress-row{display:flex; gap:6px; padding:14px 0 4px;}
+  .progress-row .seg{flex:1; height:4px; border-radius:2px; background:#dfe6e2;}
+  .progress-row .seg.done{background:var(--accent);}
+
+  .section{margin-top:18px;}
+  .section-title{
+    display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700;
+    color:var(--accent-dark); text-transform:uppercase; letter-spacing:.03em;
+    margin-bottom:10px;
+  }
+  .section-title .ico{font-size:16px;}
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:16px 18px; margin-bottom:12px;
+  }
+  label.q{display:block; font-size:14.5px; font-weight:600; margin-bottom:4px;}
+  label.q .star{color:var(--danger); margin-left:2px;}
+  .hint{font-size:12px; color:var(--muted); margin:0 0 10px;}
+
+  input[type=text], input[type=date], textarea, input[type=number], select{
+    width:100%; font-size:14.5px; padding:11px 12px; border:1px solid var(--line);
+    border-radius:8px; background:#fbfcfb; font-family:inherit; margin-top:4px;
+  }
+  select{appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b756f' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>"); background-repeat:no-repeat; background-position:right 12px center; background-size:16px; padding-right:36px;}
+  input:focus, textarea:focus, select:focus{outline:none; border-color:var(--accent); background-color:#fff;}
+  textarea{min-height:64px; resize:vertical;}
+
+  /* chip-style choice controls: bigger touch targets than radio circles */
+  .chip-group{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{
+    position:relative;
+  }
+  .chip input{position:absolute; opacity:0; width:0; height:0;}
+  .chip label{
+    display:inline-flex; align-items:center; gap:6px; padding:10px 16px;
+    border:1.5px solid var(--line); border-radius:999px; font-size:13.5px;
+    color:var(--ink); cursor:pointer; user-select:none; background:#fbfcfb;
+  }
+  .chip input:checked + label{
+    background:var(--accent-soft); border-color:var(--accent); color:var(--accent-dark); font-weight:600;
+  }
+  .chip input:checked + label::before{content:"✓"; font-size:12px;}
+
+  .chk-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+  @media (max-width:480px){.chk-grid{grid-template-columns:repeat(2,1fr);}}
+  .chk-grid .chip label{width:100%; justify-content:center; border-radius:8px;}
+
+  /* sản lượng table */
+  .sl-body{display:flex; flex-direction:column; gap:8px;}
+  .sl-row{
+    display:grid; grid-template-columns:1fr 100px 32px; gap:8px; align-items:center;
+  }
+  .sl-row input{margin-top:0;}
+  .sl-row .sl-tan{text-align:right;}
+  .rm-btn{
+    background:#fbebe9; border:none; color:var(--danger); border-radius:8px;
+    height:40px; font-size:15px; cursor:pointer;
+  }
+  .add-row-btn{
+    margin-top:10px; background:#fff; border:1.5px dashed var(--accent); color:var(--accent-dark);
+    border-radius:8px; padding:10px 14px; font-size:13.5px; cursor:pointer; font-weight:600; width:100%;
+  }
+  .add-row-btn:hover{background:var(--accent-soft);}
+  .total-line{
+    display:flex; justify-content:space-between; font-size:14px; font-weight:700;
+    margin-top:12px; padding-top:10px; border-top:1px dashed var(--line); color:var(--accent-dark);
+  }
+
+  .footbar{
+    position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid var(--line);
+    padding:12px 16px; display:flex; gap:10px; justify-content:center;
+    box-shadow:0 -2px 10px rgba(0,0,0,.05);
+  }
+  .footbar .wrap-inner{max-width:640px; width:100%; display:flex; gap:10px;}
+  .submit-btn{
+    flex:1; background:var(--accent); color:#fff; border:none; border-radius:10px;
+    padding:13px; font-size:15px; cursor:pointer; font-weight:700;
+  }
+  .submit-btn:active{background:var(--accent-dark);}
+  .clear-link{
+    background:none; border:1px solid var(--line); color:var(--muted); font-size:13.5px;
+    cursor:pointer; border-radius:10px; padding:0 16px;
+  }
+
+  .demo-box{
+    background:#eefaf5; border:1px solid #c9ead9; border-radius:10px;
+    padding:14px 18px; font-size:12.5px; color:#0a5c3f; margin-top:18px;
+  }
+  .demo-box pre{
+    background:#fff; border:1px solid #d7e9e0; border-radius:8px; padding:10px;
+    font-size:12px; overflow-x:auto; margin:8px 0 0; color:#222;
+  }
+  .note-box{
+    background:#fbf7ea; border:1px solid #eee0b8; border-radius:10px;
+    padding:12px 16px; font-size:12.5px; color:#7a5b00; margin:16px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">🧪 BẢN XEM TRƯỚC (mockup tĩnh) — chưa nối Google Sheet, bấm Gửi chỉ để xem dữ liệu sẽ ghi lại như thế nào</div>
+
+<header class="hero">
+  <div class="eyebrow">Nhà máy Bột đá · Báo cáo vận hành</div>
+  <h1>Báo cáo ngày — Vận hành NM Bột đá</h1>
+  <p>Tổ trưởng vận hành điền cuối mỗi ca. Điền đầy đủ các mục có dấu sao (*).</p>
+</header>
+
+<div class="wrap">
+
+  <div class="note-box">
+    Bản này đổi hẳn giao diện — không dùng khung/màu kiểu Google Form nữa. Lựa chọn (ca làm việc, máy nghiền, tình trạng điện...)
+    chuyển sang dạng <b>nút bấm to (chip)</b> dễ chạm trên điện thoại hơn nút tròn nhỏ. Mục <b>Sản lượng sản xuất</b> vẫn theo hướng
+    bảng Loại sản phẩm (MSP) + Số tấn, thêm dòng tuỳ ý như bản trước.
+  </div>
+
+  <form id="reportForm">
+
+    <div class="section">
+      <div class="section-title"><span class="ico">📅</span>Thông tin ca</div>
+      <div class="card">
+        <label class="q">Ngày báo cáo<span class="star">*</span></label>
+        <input type="date" id="ngay" required>
+      </div>
+      <div class="card">
+        <label class="q">Ca làm việc<span class="star">*</span></label>
+        <div class="chip-group">
+          <div class="chip"><input type="radio" name="ca" value="Ca 1 (6:00 - 17:00)" id="ca1"><label for="ca1">Ca 1 (6:00 – 17:00)</label></div>
+          <div class="chip"><input type="radio" name="ca" value="Ca 2 (22:00 - 6h00)" id="ca2"><label for="ca2">Ca 2 (22:00 – 6h00)</label></div>
+        </div>
+      </div>
+      <div class="card">
+        <label class="q">Họ tên người báo cáo<span class="star">*</span></label>
+        <div class="chip-group" id="hotenGroup">
+          <div class="chip"><input type="radio" name="hoten" value="Vũ Văn Ninh" id="ht1" required><label for="ht1">Vũ Văn Ninh</label></div>
+          <div class="chip"><input type="radio" name="hoten" value="Nguyễn Văn Thành" id="ht2"><label for="ht2">Nguyễn Văn Thành</label></div>
+          <div class="chip"><input type="radio" name="hoten" value="Nguyễn Văn Cường" id="ht3"><label for="ht3">Nguyễn Văn Cường</label></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="ico">⚙️</span>Vận hành máy nghiền</div>
+      <div class="card">
+        <label class="q">Số máy nghiền đang vận hành<span class="star">*</span></label>
+        <div class="chk-grid" id="mayNghien">
+          <div class="chip"><input type="checkbox" value="Máy 1" id="m1"><label for="m1">Máy 1</label></div>
+          <div class="chip"><input type="checkbox" value="Máy 2" id="m2"><label for="m2">Máy 2</label></div>
+          <div class="chip"><input type="checkbox" value="Máy 3" id="m3"><label for="m3">Máy 3</label></div>
+          <div class="chip"><input type="checkbox" value="Máy 4" id="m4"><label for="m4">Máy 4</label></div>
+          <div class="chip"><input type="checkbox" value="Máy 5" id="m5"><label for="m5">Máy 5</label></div>
+          <div class="chip"><input type="checkbox" value="Máy 6" id="m6"><label for="m6">Máy 6</label></div>
+          <div class="chip"><input type="checkbox" value="Máy 7" id="m7"><label for="m7">Máy 7</label></div>
+          <div class="chip"><input type="checkbox" value="Máy tráng 2" id="m8"><label for="m8">Máy tráng 2</label></div>
+          <div class="chip"><input type="checkbox" value="Máy tráng 3" id="m9"><label for="m9">Máy tráng 3</label></div>
+        </div>
+      </div>
+      <div class="card">
+        <label class="q">Số máy nghiền dừng giữa ca</label>
+        <div class="hint">Máy nào dừng — ghi rõ nguyên nhân dừng — giờ dừng</div>
+        <textarea id="mayDung" placeholder="VD: Máy 3 dừng 14h00 - kẹt hàm nghiền"></textarea>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="ico">📦</span>Sản lượng sản xuất</div>
+      <div class="card">
+        <label class="q">Sản lượng sản xuất trong ca (tấn)<span class="star">*</span></label>
+        <div class="hint">Chọn loại sản phẩm (MSP) và nhập số tấn tương ứng — bấm "+ Thêm loại sản phẩm" nếu ca có nhiều loại.</div>
+        <div class="sl-body" id="slBody"></div>
+        <button type="button" class="add-row-btn" id="addSlRow">+ Thêm loại sản phẩm</button>
+        <div class="total-line"><span>Tổng sản lượng ca</span><span id="slTotal">0 tấn</span></div>
+        <datalist id="msp-list">
+          <option value="Tráng phủ">
+          <option value="Siêu mịn">
+          <option value="Bột thô">
+          <option value="Bột mịn">
+        </datalist>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="ico">⚡</span>Điện & nhân sự</div>
+      <div class="card">
+        <label class="q">Tình trạng điện NM Bột đá (gồm văn phòng, nhà bếp)<span class="star">*</span></label>
+        <div class="chip-group">
+          <div class="chip"><input type="radio" name="dien" value="Ổn định" id="d1"><label for="d1">Ổn định</label></div>
+          <div class="chip"><input type="radio" name="dien" value="Có vấn đề" id="d2"><label for="d2">Có vấn đề</label></div>
+        </div>
+      </div>
+      <div class="card">
+        <label class="q">Số công nhân đi làm / vắng</label>
+        <input type="text" id="congnhan" placeholder="VD: 8 đi làm / 1 vắng">
+      </div>
+      <div class="card">
+        <label class="q">Sự cố điện (nếu có)<span class="star">*</span></label>
+        <div class="chip-group">
+          <div class="chip"><input type="radio" name="sucodien" value="Có sự cố" id="s1"><label for="s1">Có sự cố</label></div>
+          <div class="chip"><input type="radio" name="sucodien" value="Không có sự cố" id="s2"><label for="s2">Không có sự cố</label></div>
+        </div>
+      </div>
+      <div class="card">
+        <label class="q">Mô tả sự cố + cách xử lý</label>
+        <textarea id="motasuco" placeholder="Mô tả sự cố và hướng xử lý"></textarea>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="ico">🔧</span>Sửa chữa & bàn giao</div>
+      <div class="card">
+        <label class="q">Công việc sửa chữa / bảo dưỡng đã làm trong ngày</label>
+        <textarea id="suachua"></textarea>
+      </div>
+      <div class="card">
+        <label class="q">Vật tư điện - sửa chữa cần bổ sung</label>
+        <textarea id="vattu"></textarea>
+      </div>
+      <div class="card">
+        <label class="q">Ghi chú / Bàn giao ca sau</label>
+        <textarea id="ghichu"></textarea>
+      </div>
+    </div>
+
+  </form>
+
+  <div class="card" id="previewSection" style="display:none">
+    <div class="section-title"><span class="ico">👀</span>Xem lại trước khi gửi</div>
+    <div class="hint">Kiểm tra kỹ thông tin bên dưới. Bấm "Quay lại chỉnh sửa" nếu cần sửa, hoặc "Xác nhận & Gửi" nếu đã đúng.</div>
+    <div id="previewContent"></div>
+  </div>
+
+  <div class="demo-box" id="demoBox" style="display:none">
+    <div id="editLinkBox" style="margin-bottom:10px;"></div>
+    Dữ liệu có cấu trúc mà bản thử này tạo ra khi bấm Gửi (chưa gửi đi đâu, chỉ hiện ở đây để chị xem):
+    <pre id="demoOutput"></pre>
+  </div>
+  <div style="height:20px"></div>
+</div>
+
+<div class="footbar">
+  <div class="wrap-inner" id="footEdit">
+    <button type="button" class="clear-link" id="clearBtn">Xoá</button>
+    <button type="button" class="submit-btn" id="reviewBtn">Xem trước câu trả lời</button>
+  </div>
+  <div class="wrap-inner" id="footReview" style="display:none">
+    <button type="button" class="clear-link" id="backEditBtn">Quay lại chỉnh sửa</button>
+    <button type="button" class="submit-btn" id="confirmSendBtn">Xác nhận & Gửi</button>
+  </div>
+</div>
+
+<script>
+// URL Apps Script Web App (điền sau khi deploy) — dạng https://script.google.com/macros/s/XXXX/exec
+const APPS_SCRIPT_URL = "APPS_SCRIPT_URL_HERE";
+
+// Nếu mở lại kèm ?ma=... thì gọi doGet để tự điền lại dữ liệu cũ
+(function prefillFromMa(){
+  const params = new URLSearchParams(location.search);
+  const ma = params.get('ma');
+  if(!ma || !APPS_SCRIPT_URL || APPS_SCRIPT_URL === "APPS_SCRIPT_URL_HERE") return;
+  fetch(`${APPS_SCRIPT_URL}?ma=${encodeURIComponent(ma)}`)
+    .then(r=>r.json())
+    .then(res=>{
+      if(!res.ok){ alert('Không tìm thấy mã báo cáo: ' + ma); return; }
+      const d = res.data;
+      document.getElementById('ngay').value = d['Ngày báo cáo'] || '';
+      const htVal = d['Họ tên người báo cáo'] || '';
+      document.querySelectorAll('input[name=hoten]').forEach(r=>{ r.checked = (r.value === htVal); });
+      (d['Ca làm việc']==='Ca 1 (6:00 - 17:00)' ? document.getElementById('ca1') : document.getElementById('ca2')).checked = !!d['Ca làm việc'];
+      document.getElementById('mayDung').value = d['Số máy nghiền dừng giữa ca'] || '';
+      document.getElementById('congnhan').value = d['Số công nhân đi làm / vắng'] || '';
+      document.getElementById('motasuco').value = d['Mô tả sự cố + cách xử lý'] || '';
+      document.getElementById('suachua').value = d['Công việc sửa chữa / bảo dưỡng'] || '';
+      document.getElementById('vattu').value = d['Vật tư điện - sửa chữa cần bổ sung'] || '';
+      document.getElementById('ghichu').value = d['Ghi chú / Bàn giao ca sau'] || '';
+      (d['Tình trạng điện']==='Ổn định' ? document.getElementById('d1') : document.getElementById('d2')).checked = !!d['Tình trạng điện'];
+      (d['Sự cố điện']==='Có sự cố' ? document.getElementById('s1') : document.getElementById('s2')).checked = !!d['Sự cố điện'];
+      const may = (d['Số máy nghiền đang vận hành']||'').split(',').map(s=>s.trim());
+      document.querySelectorAll('#mayNghien input').forEach(c=>{ c.checked = may.includes(c.value); });
+      let sanLuong = [];
+      try{ sanLuong = JSON.parse(d['Sản lượng theo MSP (JSON)']||'[]'); }catch(e){}
+      document.getElementById('slBody').innerHTML = '';
+      if(sanLuong.length){ sanLuong.forEach(r=>addSlRow(r.loai_san_pham, r.so_tan)); } else { addSlRow('Tráng phủ',''); addSlRow('Siêu mịn',''); }
+      updateTotal();
+      document.getElementById('reportForm').dataset.editingMa = ma;
+    })
+    .catch(err=>console.error(err));
+})();
+
+function addSlRow(loai, tan){
+  const body = document.getElementById('slBody');
+  const row = document.createElement('div');
+  row.className = 'sl-row';
+  row.innerHTML = `
+    <input list="msp-list" type="text" placeholder="Chọn hoặc gõ loại sản phẩm" class="sl-loai" value="${loai||''}">
+    <input type="number" min="0" step="0.1" placeholder="0" class="sl-tan" value="${tan||''}">
+    <button type="button" class="rm-btn" title="Xoá dòng">✕</button>`;
+  body.appendChild(row);
+  row.querySelector('.rm-btn').addEventListener('click', ()=>{ row.remove(); updateTotal(); });
+  row.querySelector('.sl-tan').addEventListener('input', updateTotal);
+}
+function updateTotal(){
+  let sum = 0;
+  document.querySelectorAll('.sl-tan').forEach(v => sum += parseFloat(v.value||0));
+  document.getElementById('slTotal').textContent = (Math.round(sum*100)/100) + ' tấn';
+}
+document.getElementById('addSlRow').addEventListener('click', ()=>addSlRow());
+addSlRow('Tráng phủ',''); addSlRow('Siêu mịn','');
+
+document.getElementById('clearBtn').addEventListener('click', ()=>{
+  document.getElementById('reportForm').reset();
+  document.getElementById('slBody').innerHTML='';
+  addSlRow('Tráng phủ',''); addSlRow('Siêu mịn','');
+  document.getElementById('demoBox').style.display='none';
+  document.getElementById('previewSection').style.display='none';
+  document.getElementById('reportForm').style.display='block';
+  document.getElementById('footEdit').style.display='flex';
+  document.getElementById('footReview').style.display='none';
+});
+
+function collectData(){
+  const sanLuong = [];
+  document.querySelectorAll('.sl-row').forEach(row=>{
+    const loai = row.querySelector('.sl-loai').value.trim();
+    const tan = row.querySelector('.sl-tan').value;
+    if(loai || tan) sanLuong.push({loai_san_pham: loai, so_tan: tan?parseFloat(tan):null});
+  });
+  return {
+    ngay_bao_cao: document.getElementById('ngay').value,
+    ca_lam_viec: (document.querySelector('input[name=ca]:checked')||{}).value || null,
+    ho_ten: (document.querySelector('input[name=hoten]:checked')||{}).value || null,
+    may_nghien_van_hanh: Array.from(document.querySelectorAll('#mayNghien input:checked')).map(c=>c.value),
+    may_nghien_dung: document.getElementById('mayDung').value,
+    san_luong_theo_msp: sanLuong,
+    tinh_trang_dien: (document.querySelector('input[name=dien]:checked')||{}).value || null,
+    so_cong_nhan: document.getElementById('congnhan').value,
+    su_co_dien: (document.querySelector('input[name=sucodien]:checked')||{}).value || null,
+    mo_ta_su_co: document.getElementById('motasuco').value,
+    sua_chua_bao_duong: document.getElementById('suachua').value,
+    vat_tu_can_bo_sung: document.getElementById('vattu').value,
+    ghi_chu: document.getElementById('ghichu').value,
+    ma_bao_cao: document.getElementById('reportForm').dataset.editingMa || ''
+  };
+}
+
+function orChuaDien(v){ return (v===null||v===undefined||v==='') ? '<i style="color:var(--muted)">(chưa điền)</i>' : v; }
+
+function renderPreview(data){
+  const rows = [
+    ['Ngày báo cáo', data.ngay_bao_cao],
+    ['Ca làm việc', data.ca_lam_viec],
+    ['Họ tên người báo cáo', data.ho_ten],
+    ['Số máy nghiền đang vận hành', data.may_nghien_van_hanh.join(', ')],
+    ['Số máy nghiền dừng giữa ca', data.may_nghien_dung],
+    ['Tình trạng điện', data.tinh_trang_dien],
+    ['Số công nhân đi làm / vắng', data.so_cong_nhan],
+    ['Sự cố điện', data.su_co_dien],
+    ['Mô tả sự cố + cách xử lý', data.mo_ta_su_co],
+    ['Công việc sửa chữa / bảo dưỡng', data.sua_chua_bao_duong],
+    ['Vật tư điện - sửa chữa cần bổ sung', data.vat_tu_can_bo_sung],
+    ['Ghi chú / Bàn giao ca sau', data.ghi_chu],
+  ];
+  let html = '<table style="width:100%; border-collapse:collapse; font-size:13.5px;">';
+  rows.forEach(([label,val])=>{
+    html += `<tr><td style="padding:7px 8px 7px 0; color:var(--muted); vertical-align:top; width:44%;">${label}</td><td style="padding:7px 0; font-weight:500;">${orChuaDien(val)}</td></tr>`;
+  });
+  html += '</table>';
+  const tong = data.san_luong_theo_msp.reduce((s,r)=>s+(parseFloat(r.so_tan)||0),0);
+  html += '<div style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);"><b>Sản lượng sản xuất:</b><ul style="margin:6px 0 0; padding-left:18px;">';
+  if(data.san_luong_theo_msp.length){
+    data.san_luong_theo_msp.forEach(r=>{ html += `<li>${orChuaDien(r.loai_san_pham)}: <b>${r.so_tan ?? 0} tấn</b></li>`; });
+  } else {
+    html += '<li><i style="color:var(--muted)">(chưa nhập)</i></li>';
+  }
+  html += `</ul><div style="margin-top:6px; font-weight:700; color:var(--accent-dark);">Tổng: ${Math.round(tong*100)/100} tấn</div></div>`;
+  document.getElementById('previewContent').innerHTML = html;
+}
+
+document.getElementById('reviewBtn').addEventListener('click', ()=>{
+  if(!document.getElementById('reportForm').reportValidity()) return; // thiếu mục bắt buộc -> trình duyệt tự nhắc
+  const data = collectData();
+  window._pendingData = data;
+  renderPreview(data);
+  document.getElementById('reportForm').style.display = 'none';
+  document.getElementById('previewSection').style.display = 'block';
+  document.getElementById('footEdit').style.display = 'none';
+  document.getElementById('footReview').style.display = 'flex';
+  document.getElementById('previewSection').scrollIntoView({behavior:'smooth'});
+});
+
+document.getElementById('backEditBtn').addEventListener('click', ()=>{
+  document.getElementById('reportForm').style.display = 'block';
+  document.getElementById('previewSection').style.display = 'none';
+  document.getElementById('footEdit').style.display = 'flex';
+  document.getElementById('footReview').style.display = 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+document.getElementById('confirmSendBtn').addEventListener('click', function(){
+  const data = window._pendingData;
+  if(!data) return;
+  const confirmBtn = document.getElementById('confirmSendBtn');
+  confirmBtn.disabled = true; confirmBtn.textContent = 'Đang gửi...';
+
+  const showResult = (maBaoCao, mode) => {
+    const editUrl = `${location.origin}${location.pathname}?ma=${maBaoCao}`;
+    document.getElementById('editLinkBox').innerHTML = `
+      ✅ <b>${mode==='updated' ? 'Đã cập nhật lại báo cáo' : 'Đã gửi báo cáo'}</b> — Mã báo cáo: <b>${maBaoCao}</b><br>
+      Muốn sửa lại sau này, mở link: <span style="color:var(--accent-dark); word-break:break-all;">${editUrl}</span>`;
+    document.getElementById('demoOutput').textContent = JSON.stringify(data, null, 2);
+    document.getElementById('previewSection').style.display = 'none';
+    document.getElementById('footReview').style.display = 'none';
+    document.getElementById('demoBox').style.display = 'block';
+    document.getElementById('demoBox').scrollIntoView({behavior:'smooth'});
+    confirmBtn.disabled = false; confirmBtn.textContent = 'Xác nhận & Gửi';
+  };
+
+  if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL === "APPS_SCRIPT_URL_HERE"){
+    // chưa nối backend -> chỉ demo tại chỗ
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const maBaoCao = `BD-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
+    showResult(maBaoCao, 'created');
+    return;
+  }
+
+  fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'}, // tránh CORS preflight
+    body: JSON.stringify(data)
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    if(res.ok){ showResult(res.ma_bao_cao, res.mode); }
+    else { alert('Lỗi khi gửi: ' + res.error); confirmBtn.disabled=false; confirmBtn.textContent='Xác nhận & Gửi'; }
+  })
+  .catch(err=>{
+    alert('Không gửi được, kiểm tra lại kết nối: ' + err);
+    confirmBtn.disabled=false; confirmBtn.textContent='Xác nhận & Gửi';
+  });
+});
+</script>
+</body>
+</html>
