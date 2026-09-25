@@ -425,16 +425,12 @@ document.getElementById('confirmSendBtn').addEventListener('click', function(){
   confirmBtn.disabled = true; confirmBtn.textContent = 'Đang gửi...';
 
   const showResult = (maBaoCao, mode) => {
-    const editUrl = `${location.origin}${location.pathname}?ma=${maBaoCao}`;
     document.getElementById('editLinkBox').innerHTML = `
       <div style="font-size:32px; margin-bottom:6px;">✅</div>
-      <div style="font-size:17px; font-weight:700; color:var(--accent-dark); margin-bottom:6px;">
+      <div style="font-size:17px; font-weight:700; color:var(--accent-dark); margin-bottom:14px;">
         ${mode==='updated' ? 'Đã cập nhật lại báo cáo thành công!' : 'Đã gửi báo cáo thành công!'}
       </div>
-      <div style="font-size:13.5px; color:var(--muted); margin-bottom:10px;">Mã báo cáo: <b style="color:var(--ink);">${maBaoCao}</b></div>
-      <div style="font-size:12.5px; color:var(--muted);">Muốn sửa lại báo cáo này sau, lưu lại link:<br>
-      <span style="color:var(--accent-dark); word-break:break-all;">${editUrl}</span></div>
-      <button type="button" id="newReportBtn" class="submit-btn" style="margin-top:14px; width:auto; padding:10px 20px;">Gửi báo cáo khác</button>`;
+      <button type="button" id="newReportBtn" class="submit-btn" style="width:auto; padding:10px 20px;">Gửi báo cáo khác</button>`;
     document.getElementById('previewSection').style.display = 'none';
     document.getElementById('footReview').style.display = 'none';
     document.getElementById('demoBox').style.display = 'block';
