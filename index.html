@@ -121,11 +121,7 @@
 
   .demo-box{
     background:#eefaf5; border:1px solid #c9ead9; border-radius:10px;
-    padding:14px 18px; font-size:12.5px; color:#0a5c3f; margin-top:18px;
-  }
-  .demo-box pre{
-    background:#fff; border:1px solid #d7e9e0; border-radius:8px; padding:10px;
-    font-size:12px; overflow-x:auto; margin:8px 0 0; color:#222;
+    padding:28px 18px; font-size:12.5px; color:#0a5c3f; margin-top:18px; text-align:center;
   }
   .note-box{
     background:#fbf7ea; border:1px solid #eee0b8; border-radius:10px;
@@ -259,9 +255,7 @@
   </div>
 
   <div class="demo-box" id="demoBox" style="display:none">
-    <div id="editLinkBox" style="margin-bottom:10px;"></div>
-    Dữ liệu đã ghi vào Sheet:
-    <pre id="demoOutput"></pre>
+    <div id="editLinkBox"></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -433,14 +427,23 @@ document.getElementById('confirmSendBtn').addEventListener('click', function(){
   const showResult = (maBaoCao, mode) => {
     const editUrl = `${location.origin}${location.pathname}?ma=${maBaoCao}`;
     document.getElementById('editLinkBox').innerHTML = `
-      ✅ <b>${mode==='updated' ? 'Đã cập nhật lại báo cáo' : 'Đã gửi báo cáo'}</b> — Mã báo cáo: <b>${maBaoCao}</b><br>
-      Muốn sửa lại sau này, mở link: <span style="color:var(--accent-dark); word-break:break-all;">${editUrl}</span>`;
-    document.getElementById('demoOutput').textContent = JSON.stringify(data, null, 2);
+      <div style="font-size:32px; margin-bottom:6px;">✅</div>
+      <div style="font-size:17px; font-weight:700; color:var(--accent-dark); margin-bottom:6px;">
+        ${mode==='updated' ? 'Đã cập nhật lại báo cáo thành công!' : 'Đã gửi báo cáo thành công!'}
+      </div>
+      <div style="font-size:13.5px; color:var(--muted); margin-bottom:10px;">Mã báo cáo: <b style="color:var(--ink);">${maBaoCao}</b></div>
+      <div style="font-size:12.5px; color:var(--muted);">Muốn sửa lại báo cáo này sau, lưu lại link:<br>
+      <span style="color:var(--accent-dark); word-break:break-all;">${editUrl}</span></div>
+      <button type="button" id="newReportBtn" class="submit-btn" style="margin-top:14px; width:auto; padding:10px 20px;">Gửi báo cáo khác</button>`;
     document.getElementById('previewSection').style.display = 'none';
     document.getElementById('footReview').style.display = 'none';
     document.getElementById('demoBox').style.display = 'block';
     document.getElementById('demoBox').scrollIntoView({behavior:'smooth'});
     confirmBtn.disabled = false; confirmBtn.textContent = 'Xác nhận & Gửi';
+    document.getElementById('newReportBtn').addEventListener('click', ()=>{
+      document.getElementById('clearBtn').click();
+      document.getElementById('demoBox').style.display = 'none';
+    });
   };
 
   if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL === "APPS_SCRIPT_URL_HERE"){
