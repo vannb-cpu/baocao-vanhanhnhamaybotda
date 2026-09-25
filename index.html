@@ -135,8 +135,6 @@
 </head>
 <body>
 
-<div class="topbar">🧪 BẢN XEM TRƯỚC (mockup tĩnh) — chưa nối Google Sheet, bấm Gửi chỉ để xem dữ liệu sẽ ghi lại như thế nào</div>
-
 <header class="hero">
   <div class="eyebrow">Nhà máy Bột đá · Báo cáo vận hành</div>
   <h1>Báo cáo ngày — Vận hành NM Bột đá</h1>
@@ -144,12 +142,6 @@
 </header>
 
 <div class="wrap">
-
-  <div class="note-box">
-    Bản này đổi hẳn giao diện — không dùng khung/màu kiểu Google Form nữa. Lựa chọn (ca làm việc, máy nghiền, tình trạng điện...)
-    chuyển sang dạng <b>nút bấm to (chip)</b> dễ chạm trên điện thoại hơn nút tròn nhỏ. Mục <b>Sản lượng sản xuất</b> vẫn theo hướng
-    bảng Loại sản phẩm (MSP) + Số tấn, thêm dòng tuỳ ý như bản trước.
-  </div>
 
   <form id="reportForm">
 
@@ -268,7 +260,7 @@
 
   <div class="demo-box" id="demoBox" style="display:none">
     <div id="editLinkBox" style="margin-bottom:10px;"></div>
-    Dữ liệu có cấu trúc mà bản thử này tạo ra khi bấm Gửi (chưa gửi đi đâu, chỉ hiện ở đây để chị xem):
+    Dữ liệu đã ghi vào Sheet:
     <pre id="demoOutput"></pre>
   </div>
   <div style="height:20px"></div>
@@ -287,7 +279,7 @@
 
 <script>
 // URL Apps Script Web App (điền sau khi deploy) — dạng https://script.google.com/macros/s/XXXX/exec
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz35gwGhlZHCGtWK5KtOG1s63cStsFpdrckS5jxXR4F8sKXgmzwLDz7kfNj1lglO2VoFA/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxshoMsUjB2BlG1ts4Sg7bSkE4_dEECG4FrHwWeEjEzSJ0Md5bj-MetdVYyTSAQrPKP/exec";
 
 // Nếu mở lại kèm ?ma=... thì gọi doGet để tự điền lại dữ liệu cũ
 (function prefillFromMa(){
